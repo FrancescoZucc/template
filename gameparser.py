@@ -13,11 +13,14 @@ skip_words = ['a', 'about', 'all', 'an', 'another', 'any', 'around', 'at',
 
 
 def filter_words(words, skip_words):
-    word_list = []
+    wrd_lst = []
     for i in words:
         if i not in skip_words:
-            word_list.append(i)
-    return word_list
+            wrd_lst.append(i)
+        
+    return (wrd_lst)
+
+    
     """This function takes a list of words and returns a copy of the list from
     which all words provided in the list skip_words have been removed.
     For example:
@@ -58,10 +61,12 @@ def remove_punct(text):
 
 def normalise_input(user_input):
     no_punct = remove_punct(user_input).lower()
-    wspace = no_punct.split()
-    filt = filter_words(wspace,skip_words)
-    return filt
+    whitespace = no_punct.split()
 
+    filtered = filter_words(whitespace, skip_words)
+    return filtered
+
+    
     """This function removes all punctuation from the string and converts it to
     lower case. It then splits the string into a list of words (also removing
     any extra spaces between words) and further removes all "unimportant"
@@ -87,7 +92,7 @@ def normalise_input(user_input):
 
     """
     # Remove punctuation and convert to lower case
-    no_punct = remove_punct(user_input).lower()
+
 
     #
     # COMPLETE ME!

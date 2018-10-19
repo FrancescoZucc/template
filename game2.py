@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from map import rooms
+from map2 import rooms
 from player import *
 from items import *
 from gameparser import *
@@ -8,78 +8,67 @@ from gameparser import *
 
 
 def list_of_items(items):
-    item_list = ""
-    for value in items:
-        if value == items[-1]:
-            item_list = item_list + value["name"]
-            break
-        item_list = item_list + value ['name'] + ','
-    return item_list
     """This function takes a list of items (see items.py for the definition) and
     returns a comma-separated list of item names (as a string). For example:
-
     >>> list_of_items([item_pen, item_handbook])
     'a pen, a student handbook'
-
     >>> list_of_items([item_id])
     'id card'
-
     >>> list_of_items([])
     ''
-
     >>> list_of_items([item_money, item_handbook, item_laptop])
     'money, a student handbook, laptop'
+    """    
+    store_string = ''
+    for value in items:
+        if value == items[-1]:
+            store_string = store_string + value['name']
+            break
+        store_string = store_string + value['name'] + ', '
+    return store_string
 
-    """
     pass
 
 
 def print_room_items(room):
-    print_list_items = list_of_items(room["items"])
-    if print_list_items:
-        print("There is " + print_list_items + " here\n")
     """This function takes a room as an input and nicely displays a list of items
     found in this room (followed by a blank line). If there are no items in
     the room, nothing is printed. See map.py for the definition of a room, and
     items.py for the definition of an item. This function uses list_of_items()
     to produce a comma-separated list of item names. For example:
-
     >>> print_room_items(rooms["Reception"])
-    There is a pack of biscuits, a student
-    andbook here.
+    There is a pack of biscuits, a student handbook here.
     <BLANKLINE>
-
     >>> print_room_items(rooms["Office"])
     There is a pen here.
     <BLANKLINE>
-
     >>> print_room_items(rooms["Admins"])
-
     (no output)
-
     Note: <BLANKLINE> here means that doctest should expect a blank line.
+    """    
+    print_items = list_of_items(room['items'])
+    if print_items:
+        print('There is '+ print_items + ' here' + '.\n')
 
-    """
     pass
 
 
 def print_inventory_items(items):
-    item_list = ""
-    for value in items:
-        if value == items[-1]:
-            item_list = item_list + value["name"] + "\n"
-            break
-        item_list = item_list + value ['name'] + ','
-    print("you have " + item_list)
     """This function takes a list of inventory items and displays it nicely, in a
     manner similar to print_room_items(). The only difference is in formatting:
     print "You have ..." instead of "There is ... here.". For example:
-
     >>> print_inventory_items(inventory)
     You have id card, laptop, money.
     <BLANKLINE>
+    """    
+    store_string = ''
+    for value in items:
+        if value == items[-1]:
+            store_string = store_string + value['name'] + '.\n'
+            break
+        store_string = store_string + value['name'] + ', '
+    print('You have ' + store_string)
 
-    """
     pass
 
 
@@ -91,7 +80,6 @@ def print_room(room):
     description of the room and a blank line again. If there are any items
     in the room, the list of items is printed next followed by a blank line
     (use print_room_items() for this). For example:
-
     >>> print_room(rooms["Office"])
     <BLANKLINE>
     THE GENERAL OFFICE
@@ -103,7 +91,6 @@ def print_room(room):
     <BLANKLINE>
     There is a pen here.
     <BLANKLINE>
-
     >>> print_room(rooms["Reception"])
     <BLANKLINE>
     RECEPTION
@@ -117,7 +104,6 @@ def print_room(room):
     <BLANKLINE>
     There is a pack of biscuits, a student handbook here.
     <BLANKLINE>
-
     >>> print_room(rooms["Admins"])
     <BLANKLINE>
     MJ AND SIMON'S ROOM
@@ -126,7 +112,6 @@ def print_room(room):
     room. Inside you notice Matt "MJ" John and Simon Jones. They
     ignore you. To the north is the reception.
     <BLANKLINE>
-
     Note: <BLANKLINE> here means that doctest should expect a blank line.
     """
     # Display room name
@@ -137,6 +122,8 @@ def print_room(room):
     print(room["description"])
     print()
 
+    print_room_items(room)
+
     #
     # COMPLETE ME!
     #
@@ -145,7 +132,6 @@ def exit_leads_to(exits, direction):
     """This function takes a dictionary of exits and a direction (a particular
     exit taken from this dictionary). It returns the name of the room into which
     this exit leads. For example:
-
     >>> exit_leads_to(rooms["Reception"]["exits"], "south")
     "MJ and Simon's room"
     >>> exit_leads_to(rooms["Reception"]["exits"], "east")
@@ -160,9 +146,7 @@ def print_exit(direction, leads_to):
     """This function prints a line of a menu of exits. It takes a direction (the
     name of an exit) and the name of the room into which it leads (leads_to),
     and should print a menu line in the following format:
-
     GO <EXIT NAME UPPERCASE> to <where it leads>.
-
     For example:
     >>> print_exit("east", "you personal tutor's office")
     GO EAST to you personal tutor's office.
@@ -181,15 +165,10 @@ def print_menu(exits, room_items, inv_items):
     the appropriate format. The room into which an exit leads is obtained
     using the function exit_leads_to(). Then, it should print a list of commands
     related to items: for each item in the room print
-
     "TAKE <ITEM ID> to take <item name>."
-
     and for each item in the inventory print
-
     "DROP <ITEM ID> to drop <item name>."
-
     For example, the menu of actions available at the Reception may look like this:
-
     You can:
     GO EAST to your personal tutor's office.
     GO WEST to the parking lot.
@@ -200,13 +179,18 @@ def print_menu(exits, room_items, inv_items):
     DROP LAPTOP to drop your laptop.
     DROP MONEY to drop your money.
     What do you want to do?
-
     """
     print("You can:")
     # Iterate over available exits
     for direction in exits:
         # Print the exit name and where it leads to
         print_exit(direction, exit_leads_to(exits, direction))
+
+    for item in room_items:
+        print('Take ' + item['id'].upper() + ' to take ' + item['name'] + '.')
+    for item in inv_items:
+        print('Drop '+ item['id'].upper() + ' to drop your ' + item['name'] + '. ')
+    
 
     #
     # COMPLETE ME!
@@ -221,7 +205,6 @@ def is_valid_exit(exits, chosen_exit):
     It returns True if the exit is valid, and False otherwise. Assume that
     the name of the exit has been normalised by the function normalise_input().
     For example:
-
     >>> is_valid_exit(rooms["Reception"]["exits"], "south")
     True
     >>> is_valid_exit(rooms["Reception"]["exits"], "up")
@@ -240,7 +223,12 @@ def execute_go(direction):
     (and prints the name of the room into which the player is
     moving). Otherwise, it prints "You cannot go there."
     """
-    pass
+    global current_room
+    if (is_valid_exit(current_room["exits"], direction) == True):
+        current_room = move(current_room["exits"],direction)
+    else:
+        print("you cannot go there")
+
 
 
 def execute_take(item_id):
@@ -249,7 +237,13 @@ def execute_take(item_id):
     there is no such item in the room, this function prints
     "You cannot take that."
     """
-    pass
+    global inventory
+    for i in current_room["items"]:
+        if item_id == i["id"]:
+            inventory.append(i)
+            current_room["items"].remove(i)
+            return
+    print("You cannot take that.")
     
 
 def execute_drop(item_id):
@@ -257,7 +251,13 @@ def execute_drop(item_id):
     player's inventory to list of items in the current room. However, if there is
     no such item in the inventory, this function prints "You cannot drop that."
     """
-    pass
+    global inventory
+    for i in inventory:
+        if item_id == i["id"]:
+            current_room["items"].append(i)
+            inventory.remove(i)
+            return
+    print("You cannot drop that.")
     
 
 def execute_command(command):
@@ -265,7 +265,6 @@ def execute_command(command):
     normalise_input) and, depending on the type of action (the first word of
     the command: "go", "take", or "drop"), executes either execute_go,
     execute_take, or execute_drop, supplying the second word as the argument.
-
     """
 
     if 0 == len(command):
@@ -299,7 +298,6 @@ def menu(exits, room_items, inv_items):
     actions using print_menu() function. It then prompts the player to type an
     action. The players's input is normalised using the normalise_input()
     function before being returned.
-
     """
 
     # Display menu
@@ -318,7 +316,6 @@ def move(exits, direction):
     """This function returns the room into which the player will move if, from a
     dictionary "exits" of avaiable exits, they choose to move towards the exit
     with the name given by "direction". For example:
-
     >>> move(rooms["Reception"]["exits"], "south") == rooms["Admins"]
     True
     >>> move(rooms["Reception"]["exits"], "east") == rooms["Tutor"]
@@ -353,4 +350,3 @@ def main():
 # See https://docs.python.org/3.4/library/__main__.html for explanation
 if __name__ == "__main__":
     main()
-
